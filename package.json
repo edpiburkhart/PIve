@@ -1,0 +1,27 @@
+{
+  "name": "pive",
+  "version": "0.0.1",
+  "description": "PI Drive",
+  "main": "app.js",
+  "scripts": {
+    "test": "DEBUG=PIve:* npm start",
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/edpiburkhart/PIve.git"
+  },
+  "author": "Ed Pi BU",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/edpiburkhart/PIve/issues"
+  },
+  "homepage": "https://github.com/edpiburkhart/PIve#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "debug": "^3.1.0",
+    "express": "^4.16.3",
+    "express-session": "^1.15.6",
+    "pug": "^2.0.3"
+  }
+}

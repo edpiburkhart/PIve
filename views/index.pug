@@ -1,0 +1,34 @@
+html(lang='fr')
+    head
+        meta(charset='utf-8')
+        title PIDrive
+        link(rel='stylesheet' type='text/css' href='stylesheets/main.css')
+        link(rel='stylesheet' href='https://use.fontawesome.com/releases/v5.0.13/css/solid.css' integrity='sha384-Rw5qeepMFvJVEZdSo1nDQD5B6wX0m7c5Z/pLNvjkB14W6Yki1hKbSEQaX9ffUbWe' crossorigin='anonymous')
+        link(rel='stylesheet' href='https://use.fontawesome.com/releases/v5.0.13/css/fontawesome.css' integrity='sha384-GVa9GOgVQgOk+TNYXu7S/InPTfSDTtBalSgkgqQ7sCik56N9ztlkoTr2f/T44oKV' crossorigin='anonymous')
+    body
+        nav
+            h1 PIDrive
+            div.nav
+                a(href='#Recent') Fichiers récents
+                a(href='#All') Tous les fichiers
+                a=data
+                a(href='/logout').bottomlink Déconnexion
+        .container
+            .explorersettings Trier par :
+                a(href='#') Date
+                |,
+                a(href='#').active.up Nom
+                |,
+                a(href='#') Taille
+                |.
+        .explorer
+            .folders
+                each folder in folders
+                    .folder
+                        i.fa.fa-folder
+                        =folder
+            .files
+                each file in files
+                    .file
+                        i.fa(class=file.icon)
+                        =file.name

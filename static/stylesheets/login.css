@@ -1,0 +1,81 @@
+@import url('https://fonts.googleapis.com/css?family=Lato:300,400|Playfair+Display');
+
+.fullh {
+    height: 100%;
+}
+
+body>div {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.loginbox {
+    border-radius: 2px;
+    width: 350px;
+    height: 350px;
+    background-color: white;
+    box-shadow: 0 0 1em black;
+    padding: 25px;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: coral;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+    margin: 0;
+    font-family: 'Lato', Arial, sans-serif;
+    font-weight: 300;
+}
+
+form>* {
+    display: block;
+    margin: 25px auto;
+    width: 250px;
+    height: 50px;
+    font-family: inherit;
+    font-weight: inherit;
+    font-size: 1.5em;
+    box-sizing: border-box;
+    transition: 250ms transform;
+    text-align: right;
+    padding: 0 1em;
+}
+
+input[type=submit] {
+    background-color: coral;
+    border: none;
+    border-radius: 2px;
+    color: white;
+    cursor: pointer;
+}
+
+h1 {
+    font-family: 'Playfair Display';
+    background-color: coral;
+    color: white;
+    font-size: 50px;
+    height: 25px;
+    line-height: 25px;
+    text-align: left;
+    padding: 0;
+}
+
+input:not([type=submit]) {
+    border: none;
+    border-bottom: .1em solid coral;
+    outline: none;
+}
+
+input:not([type=submit]):focus {
+    transform: scale(1.1);
+    background-color: whitesmoke;
+}
+
+input[type=submit]:hover {
+    transform: scale(1.1);
+}
