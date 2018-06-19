@@ -5,6 +5,7 @@ const core = require('../PIveCore');
 const fs = require('fs');
 const colors = require('colors');
 const crypto = require('crypto');
+const path = require('path');
 
 const debug = require('debug');
 const info = debug('PIve:info');
@@ -15,6 +16,7 @@ info.log = console.info.bind(console);
 const express = require('express');
 const url = require('url');
 const pug = require('pug');
+const fileUpload = require('express-fileupload');
 
 const session = require('express-session');
 const bodyParser = require('body-parser');
@@ -23,6 +25,7 @@ const app = express()
 
 app.use(express.static('static'));
 app.set('view engine', 'pug');
+app.use(fileUpload());
 
 app.set('trust proxy', 1);
 app.use(session({
@@ -52,6 +55,14 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.get('/', function(req, res, next) {
     if (!req.session.username) {
         res.render('login');
+    } else {
+        next();
+    }
+});
+
+app.get('/*', function(req, res, next) {
+    if (!req.session.username) {
+        res.redirect('/');
     } else {
         next();
     }
@@ -117,6 +128,21 @@ app.post('/[\:]createUser', function(req, res) {
 			}
 		});
 	}
+});
+
+app.post('/[\:]import/*', function(req, res) {
+    if (req.session.username) {
+        var pa = req.originalUrl.split('/');
+        pa.splice(0,2);
+        pa = pa.join('/');
+        req.files.upload.mv(path.join(basePath, pa, req.files.upload.name), function(err) {
+            if (err) error(err.message.red)
+            else info('File uploaded successfully')
+            res.redirect("/"+pa);
+        });
+    } else {
+        res.redirect('/');
+    }
 });
 
 app.get('/[\:]recent', function(req, res) {

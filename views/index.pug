@@ -10,9 +10,7 @@ html(lang='fr')
         nav
             h1 PIDrive
             div.nav
-                a(href='/:recent') Fichiers récents
                 a(href='/') Tous les fichiers
-                a=data
                 a(href='/:logout').bottomlink Déconnexion
         .container
             .explorersettings
@@ -32,4 +30,15 @@ html(lang='fr')
                         i.fa(class='fa-'+file.icon)
                         =file.name
                         
-        i.addFile.fa.fa-plus-circle
+        i#addFile.addFile.fa.fa-plus-circle
+        i#newFolder.addFile.fa.fa-dot-circle
+        
+        #addFileWindow
+            .full
+            .addFileContainer#addFileContainer
+                form(method='post' action='/:import'+basePath encType='multipart/form-data')
+                    label(for='file') Choisir un fichier
+                    input#file(type='file' name='upload')
+                    input(type='submit' value='Importer')
+        
+        script(type='text/javascript' src='/scripts/addFile.js')

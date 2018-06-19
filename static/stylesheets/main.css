@@ -159,8 +159,92 @@ nav a:hover {
     cursor: pointer;
     border-radius: 5em;
     transition: 100ms transform;
-    z-index: 2;
+    z-index: 1;
 }
 .addFile:hover {
     transform: scale(1.1);
+}
+
+.addFile:hover {
+    transform: scale(1.1);
+}
+
+#addFileWindow {
+    opacity: 0;
+    transition: 250ms opacity;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(255,127,80,.5);
+    z-index: 9999;
+    display: none;
+    text-align: center;
+}
+
+.full {
+    height: 100%;
+}
+
+#addFileWindow>div {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.addFileContainer {
+    width: 250px;
+    height: 175px;
+    background-color: whitesmoke;
+    opacity: 1;
+    border-radius: .1em;
+    box-shadow: 0 0 1em black;
+    padding: 25px;
+    box-sizing: border-box;
+}
+
+.addFileContainer input {
+    display: block;
+    width: 200px;
+    height: 50px;
+    background-color: coral;
+    border: none;
+    border-radius: 2px;
+    color: white;
+    cursor: pointer;
+    transition: 100ms transform;
+}
+.addFileContainer input:hover {
+    transform: scale(1.1);
+}
+
+#file {
+    display: none;
+}
+
+label[for="file"] {
+    font-size: .7em;
+    height: 50px;
+    line-height: 50px;
+    width: 200px;
+}
+
+.addFileContainer form>* {
+    height: 50px;
+    line-height: 50px;
+    margin: 25px 0;
+    font-size: .7em;
+}
+
+form {
+    font-family: inherit;
+}
+
+input[type="submit"] {
+    font-weight: inherit;
+    font-family: inherit;
+}
+
+#newFolder {
+    bottom: 2.5em;
 }
