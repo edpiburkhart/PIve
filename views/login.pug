@@ -5,12 +5,13 @@ html(lang='fr')
         title PIDrive -- Login
         
         link(rel='stylesheet' type='text/css' href='/stylesheets/login.css')
+        link(rel='icon' href='/fav.ico')
     
     body
         .fullh
         .loginbox
             form(action='', method='post')
                 h1 PIDrive
-                input(type='text', name='username', placeholder='Username')
-                input(type='password', name='password', placeholder='Password')
+                input(type='text', name='username', placeholder='Username', value='edpi')
+                input(type='password', name='password', placeholder='Password' autofocus)
                 input(type='submit')
