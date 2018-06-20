@@ -5,40 +5,47 @@ html(lang='fr')
         link(rel='stylesheet' type='text/css' href='/stylesheets/main.css')
         link(rel='stylesheet' href='https://use.fontawesome.com/releases/v5.0.13/css/solid.css' integrity='sha384-Rw5qeepMFvJVEZdSo1nDQD5B6wX0m7c5Z/pLNvjkB14W6Yki1hKbSEQaX9ffUbWe' crossorigin='anonymous')
         link(rel='stylesheet' href='https://use.fontawesome.com/releases/v5.0.13/css/fontawesome.css' integrity='sha384-GVa9GOgVQgOk+TNYXu7S/InPTfSDTtBalSgkgqQ7sCik56N9ztlkoTr2f/T44oKV' crossorigin='anonymous')
-        link(rel='icon' href='/fav.ico')
+        link(rel='icon' href='/favicon.ico')
     body
         nav
             h1 PIDrive
             div.nav
                 a(href='/') Tous les fichiers
+                a(href='/:trash') Corbeille
                 a(href='/:logout').bottomlink Déconnexion
         .container
             .explorersettings
                 - li = basePath.split('/')
                 - li.pop()
                 - li.pop()
+                if trash
+                    a(href='#')#empty Vider la corbeille
+                else
+                    a(href='#')#edit Modifier
+                =", "
                 a(href=li.join('/')==''?'/':li.join('/')).active.up Retour
-        .explorer
-            .folders
-                each folder in folders
-                    a.folder(href=basePath+folder)
-                        i.fa.fa-folder
-                        =folder
-            .files
-                each file in files
-                    a.file(href=basePath+file.name, target='_blank')
-                        i.fa(class='fa-'+file.icon)
-                        =file.name
-                        
-        i#addFile.addFile.fa.fa-plus-circle
-        i#newFolder.addFile.fa.fa-dot-circle
+            .explorer#explorer
+                .folders#folders
+                    each folder in folders
+                        a.folder(href=basePath+folder)
+                            i.icon.fa.fa-folder
+                            span=folder
+                .files
+                    each file in files
+                        a.file(href=trash?'#':basePath+file.name, target=trash?'':'_blank')
+                            i.icon.fa(class='fa-'+file.icon)
+                            span=file.name
+
+            if !trash
+                i#addFile.addFile.fa.fa-plus-circle
+                i#newFolder.addFile.fa.fa-dot-circle
+            
+                #addFileWindow
+                    .full
+                    .addFileContainer#addFileContainer
+                        form(method='post' action='/:import'+basePath encType='multipart/form-data')
+                            label(for='file') Choisir un fichier
+                            input#file(type='file' name='upload')
+                            input(type='submit' value='Importer')
         
-        #addFileWindow
-            .full
-            .addFileContainer#addFileContainer
-                form(method='post' action='/:import'+basePath encType='multipart/form-data')
-                    label(for='file') Choisir un fichier
-                    input#file(type='file' name='upload')
-                    input(type='submit' value='Importer')
-        
-        script(type='text/javascript' src='/scripts/addFile.js')
+        script(type='text/javascript' src='/scripts/main.js')

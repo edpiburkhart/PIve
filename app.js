@@ -2,14 +2,15 @@ const port = 8000;
 const basePath = '/mnt/c/Users/Edgar Pierre/Google Drive';
 
 const core = require('../PIveCore');
-const fs = require('fs');
+const fs = require('fs-extra');
 const colors = require('colors');
 const crypto = require('crypto');
 const path = require('path');
 
 const debug = require('debug');
 const info = debug('PIve:info');
-const error = debug('PIve:error');
+const _error = debug('PIve:error');
+function error(msg) {_error(msg.red);}
 const warning = debug('PIve:warning');
 info.log = console.info.bind(console);
 
@@ -68,12 +69,13 @@ app.get('/*', function(req, res, next) {
     }
 });
 
-app.post('/', function(req, res) {
+app.post('/', function(req, res, next) {
     if (req.session.username) {
-        res.redirect('/');
+        if (req.body.action) next();
+        else res.redirect('/');
     } else {
         fs.readFile('./.users', 'utf8', function(err, data) {
-			if (err) error('Erreur de lecture des utilisateurs !'.red)
+			if (err) error('Erreur de lecture des utilisateurs !')
 			else {
 				lines = data.split('\r\n');
 				var users = new Object();
@@ -134,19 +136,107 @@ app.post('/[\:]import/*', function(req, res) {
     if (req.session.username) {
         var pa = req.originalUrl.split('/');
         pa.splice(0,2);
+        pa.pop();
         pa = pa.join('/');
         req.files.upload.mv(path.join(basePath, pa, req.files.upload.name), function(err) {
-            if (err) error(err.message.red)
+            if (err) error(err.message)
             else info('File uploaded successfully')
-            res.redirect("/"+pa);
+            res.redirect('/'+pa);
         });
     } else {
         res.redirect('/');
     }
 });
 
-app.get('/[\:]recent', function(req, res) {
-    res.redirect('/');
+app.get('/[\:]trash*', function(req, res) {
+    var pa = req.originalUrl.split('/');
+    pa.splice(0,2);
+    pa = pa.join('/');
+    core.getDirContent(path.join(basePath, '../_trash', pa), function(err, data) {
+        if (err) {error(err.message);res.redirect('/')}
+        else {
+            folders = [];files = [];
+            for (var i=0;i < data.length;i++) {
+                elt = data[i]
+                switch (elt.type) {
+                    case 'dir': folders.push(elt.name);break;
+                    default: 
+                        var icon;
+
+                        if (/^video/.test(elt.type)) icon = 'film';
+                        else if (/^audio/.test(elt.type)) icon = 'music';
+                        else if (/^text/.test(elt.type)) icon= 'file-code';
+                        else if (/^image/.test(elt.type)) icon = 'image'
+                        else {
+                            switch (elt.type){
+                                case 'application/vnd.openxmlformats-officedocument.presentationml.presentation':
+                                case 'application/vnd.ms-powerpoint':
+                                    icon = 'file-powerpoint';break;
+                                case 'application/msword':
+                                case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+                                    icon = 'file-word';break;
+                                case 'application/vnd.ms-excel':
+                                case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+                                    icon = 'file-excel';break;
+                                case 'application/pdf':
+                                    icon = 'file-pdf';break;
+                                case 'application/zip':
+                                    icon = 'file-archive';break;
+                                default: icon = 'file';
+                            }
+                        }
+                        files.push({name: elt.name, icon: icon});
+                }
+            }
+            res.render('index', {folders: folders, files: files, basePath: '/:trash/'+pa, trash: true});
+        }
+    });
+});
+
+app.post('/*', function(req, res) {
+    if (req.body.action=='rm') {
+        var pa = req.originalUrl;
+        fs.move(path.join(basePath, pa, req.body.rm), path.join(basePath, '../_trash', req.body.rm), {overwrite: true}, function(err) {
+            if (err) {
+                error(err.message);
+                res.send(err.message);
+            }
+            res.send('OK');
+        });
+    } else if (req.body.action=='mv') {
+        var pa = req.originalUrl;
+        fs.access(path.join(basePath, pa, req.body.newname), function(err) {
+            if (err && err.code === 'ENOENT') {
+                fs.move(path.join(basePath, pa, req.body.oldname), path.join(basePath, pa, req.body.newname), function(err) {
+                    if (err) {error(err.message);res.send(err.message);}
+                    else res.send('OK');
+                });
+            } else if (err) {
+                error(err.message);res.send(err.message);
+            } else {
+                error("Impossible de déplacer le fichier")
+                res.send('ERR');
+            }
+        })
+    } else if (req.body.action=='empty') {
+        fs.remove(path.join(basePath, '../_trash'), function(err) {
+            if (err) {error(err.message);res.send(err.message);}
+            else {
+                info('Bin emptied');
+                fs.mkdir(path.join(basePath, '../_trash'), function(err) {
+                    if (err) {error(err.message);res.send(err.message);}
+                    else res.send('OK');
+                });
+            }
+        });
+    } else if (req.body.action=='newfolder') {
+        info('New folder')
+        var pa = req.originalUrl;
+        fs.mkdir(path.join(basePath, pa, req.body.name), function(err) {
+            if (err) {error(err.message);res.send(err.message);}
+            else res.send('OK');
+        });
+    }
 });
 
 app.get('/*', function(req, res) {
@@ -154,9 +244,9 @@ app.get('/*', function(req, res) {
         res.redirect('/');
         return;
     }
-    var path = basePath + decodeURI(req.originalUrl);
-    if (fs.statSync(path).isDirectory()) {
-        core.getDirContent(path, function(err, data) {
+    var pa = basePath + decodeURI(req.originalUrl);
+    if (fs.statSync(pa).isDirectory()) {
+        core.getDirContent(pa, function(err, data) {
             if (err) {error(err.message);res.redirect('/')}
             else {
                 folders = [];files = [];
@@ -192,11 +282,11 @@ app.get('/*', function(req, res) {
                             files.push({name: elt.name, icon: icon});
                     }
                 }
-                res.render('index', {folders: folders, files: files, basePath: req.originalUrl=='/'?req.originalUrl:decodeURI(req.originalUrl+'/')});
+                res.render('index', {folders: folders, files: files, basePath: req.originalUrl=='/'?req.originalUrl:decodeURI(req.originalUrl+'/'), trash: false});
             }
         });
     } else {
-        res.sendFile(path);
+        res.sendFile(pa);
     }
 });
 

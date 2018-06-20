@@ -20,7 +20,7 @@ body>div {
 }
 
 body {
-    background-color: coral;
+    background-color: darkseagreen;
     position: absolute;
     top: 0;
     bottom: 0;
@@ -47,7 +47,7 @@ form>* {
 }
 
 input[type=submit] {
-    background-color: coral;
+    background-color: darkseagreen;
     border: none;
     border-radius: 2px;
     color: white;
@@ -56,7 +56,7 @@ input[type=submit] {
 
 h1 {
     font-family: 'Playfair Display';
-    background-color: coral;
+    background-color: darkseagreen;
     color: white;
     font-size: 50px;
     height: 25px;
@@ -67,7 +67,7 @@ h1 {
 
 input:not([type=submit]) {
     border: none;
-    border-bottom: .1em solid coral;
+    border-bottom: .1em solid darkseagreen;
     outline: none;
 }
 
